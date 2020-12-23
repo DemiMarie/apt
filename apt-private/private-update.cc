@@ -66,11 +66,12 @@ bool DoUpdate(CommandLine &CmdL)
       return true;
    }
 
+   bool download_succeeded = true;
    // do the work
    if (_config->FindB("APT::Get::Download",true) == true)
    {
       AcqTextStatus Stat(std::cout, ScreenWidth,_config->FindI("quiet",0));
-      ListUpdate(Stat, *List);
+      download_succeeded = ListUpdate(Stat, *List);
    }
 
    if (_config->FindB("pkgCacheFile::Generate", true) == false)
@@ -143,6 +144,6 @@ bool DoUpdate(CommandLine &CmdL)
       RunScripts("APT::Update::Post-Invoke-Stats");
    }
 
-   return true;
+   return download_succeeded || !_config->FindB("APT::Get::Fail-On-Download-Error", false);
 }
 									/*}}}*/
